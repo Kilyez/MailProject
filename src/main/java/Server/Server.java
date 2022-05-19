@@ -1,15 +1,22 @@
 package Server;
 
+import Messages.Mail;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
     private ServerSocket server;
     private Socket s;
+    private static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+    private ExecutorService pool = Executors.newFixedThreadPool(4);
 
     public Server(int port){
         this.port = port;
@@ -37,19 +44,10 @@ public class Server {
             {
                 System.out.println("Server in attesa di richieste...");
                 s = server.accept();
-
-
-                System.out.println("Un client si e' connesso...");
-                JSONObject json = receiveJSON();
-                System.out.println(json);
-                OutputStream sOut = s.getOutputStream();
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(sOut));
-
-                // Il server invia la risposta al client
-                bw.write("Benvenuto sul server!n");
-
-                // Chiude lo stream di output e la connessione
-                bw.close();
+                System.out.println("Connected to Client");
+                ClientHandler clientThread = new ClientHandler(s);
+                clients.add(clientThread);
+                pool.execute(clientThread);
 
             }
             catch (IOException ex)
@@ -70,22 +68,12 @@ public class Server {
         }
     }
 
-    public JSONObject receiveJSON() throws IOException {
-        InputStream in = s.getInputStream();
-        ObjectInputStream i = new ObjectInputStream(in);
-        JSONObject line = null;
-        try {
-            line = (JSONObject) i.readObject();
+    public Mail receiveMessage() throws IOException, ClassNotFoundException {
+        ObjectInputStream reader = new ObjectInputStream(s.getInputStream());
+        Mail mail = (Mail) reader.readObject();
 
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        System.out.println("Got from client on port " + s.getPort() + " " );
+        return mail;
 
-        }
-
-        JSONObject jsonObject = new JSONObject(line);
-        System.out.println("Got from client on port " + s.getPort() + " " + jsonObject.get("key").toString());
-        return jsonObject;
     }
-
 }
