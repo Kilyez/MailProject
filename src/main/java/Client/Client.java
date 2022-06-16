@@ -9,8 +9,10 @@ import java.util.Random;
 
 public class Client
 {
-    Socket client;
-    String ip;
+    private Socket client;
+    private ObjectInputStream input;
+    private ObjectOutputStream out;
+    private String ip;
 
     public Client()
     {
@@ -30,17 +32,19 @@ public class Client
     }
 
     public void SendMessage() throws IOException {
-
-        ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+        out = new ObjectOutputStream(client.getOutputStream());
         Mail mail = new Mail("ciao sono una prova","mattiamondino@gmail.com",this.ip,"io","oggi","tu");
         out.writeObject(mail);
 
     }
 
-    public void reciveMessagge() throws IOException {
+    public Mail receiveMessage() throws IOException, ClassNotFoundException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream(),"UTF-8"));
+        input = new ObjectInputStream(client.getInputStream());
+        Mail mail = (Mail) input.readObject();
 
+        System.out.println("Got from client on port " + client.getPort() + " " );
+        return mail;
 
     }
 

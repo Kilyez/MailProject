@@ -24,8 +24,12 @@ public class ClientHandler implements Runnable{
         while (!client.isClosed() &&  client.isConnected())
         {
             try {
-                Mail mail = (Mail) input.readObject();
+
+                Mail mail = receiveMessage();
                 System.out.println(mail.getEmail());
+                Mail mail1 = new Mail("ciao sono una prova","matti@gmail.com","","io","oggi","tu");
+                out.writeObject(mail1);
+
                 client.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -43,6 +47,13 @@ public class ClientHandler implements Runnable{
 
         System.out.println("Got from client on port " + client.getPort() + " " );
         return mail;
+
+    }
+
+    public void SendMessage() throws IOException {
+
+        Mail mail = new Mail("ciao sono una prova","matti@gmail.com","","io","oggi","tu");
+        out.writeObject(mail);
 
     }
 }
