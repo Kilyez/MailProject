@@ -1,6 +1,7 @@
 package Server;
 
 import Messages.Mail;
+import Messages.RecordMessagges;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,6 +11,7 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream input;
     private ObjectOutputStream out;
     private int counter;
+    private RecordMessagges recordMessagges;
 
 
     public ClientHandler(Socket client) throws IOException {
@@ -17,6 +19,7 @@ public class ClientHandler implements Runnable{
         input = new ObjectInputStream(client.getInputStream());
         out = new ObjectOutputStream(client.getOutputStream());
         counter ++;
+        recordMessagges = new RecordMessagges();
     }
 
     @Override
@@ -26,11 +29,12 @@ public class ClientHandler implements Runnable{
             try {
 
                 Mail mail = receiveMessage();
+                recordMessagges.saveMail(mail);
                 System.out.println(mail.getEmail());
-                Mail mail1 = new Mail("ciao sono una prova","matti@gmail.com","","io","oggi","tu");
+                Mail mail1 = new Mail("ciao sono una prova","matti@gmail.com","io","","oggi");
                 out.writeObject(mail1);
-
                 client.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -52,8 +56,9 @@ public class ClientHandler implements Runnable{
 
     public void SendMessage() throws IOException {
 
-        Mail mail = new Mail("ciao sono una prova","matti@gmail.com","","io","oggi","tu");
+        Mail mail = new Mail("ciao sono una prova","matti@gmail.com","io","","tu");
         out.writeObject(mail);
 
     }
+
 }

@@ -4,17 +4,16 @@ import java.io.Serializable;
 
 public class Mail implements Serializable {
 
+    private String object;
     private String text;
     private String email;
-    private String ip;
     private String sender;
     private String date;
     private String reciver;
 
-    public Mail(String text, String email, String ip, String sender, String date, String reciver) {
+    public Mail(String text, String email, String sender, String date, String reciver) {
         this.text = text;
         this.email = email;
-        this.ip = ip;
         this.sender = sender;
         this.date = date;
         this.reciver = reciver;
@@ -34,14 +33,6 @@ public class Mail implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
     }
 
     public String getSender() {

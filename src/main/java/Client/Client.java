@@ -31,9 +31,9 @@ public class Client
 
     }
 
-    public void SendMessage() throws IOException {
+    public void SendMessage(Mail mail) throws IOException {
         out = new ObjectOutputStream(client.getOutputStream());
-        Mail mail = new Mail("ciao sono una prova","mattiamondino@gmail.com",this.ip,"io","oggi","tu");
+
         out.writeObject(mail);
 
     }
@@ -43,7 +43,7 @@ public class Client
         input = new ObjectInputStream(client.getInputStream());
         Mail mail = (Mail) input.readObject();
 
-        System.out.println("Got from client on port " + client.getPort() + " " );
+        System.out.println("Got from Server on port " + client.getPort() + " " );
         return mail;
 
     }
