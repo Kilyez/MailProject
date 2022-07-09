@@ -1,10 +1,12 @@
 package Server;
 
 import Messages.Mail;
+import Messages.Message;
 import Messages.RecordMessagges;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
     private Socket client;
@@ -30,10 +32,14 @@ public class ClientHandler implements Runnable{
 
                 Mail mail = receiveMessage();
                 recordMessagges.saveMail(mail);
-                System.out.println(mail.getEmail());
+               /* Message message = new Message("req", "","simone@gmail.com","","");
+                ArrayList<Mail> mailList = recordMessagges.getUserMails(message);
+                mailList.forEach( m -> System.out.println(m.getEmail()));
+                System.out.println(mail.getEmail());*/
                 Mail mail1 = new Mail("ciao sono una prova","matti@gmail.com","io","","oggi");
                 out.writeObject(mail1);
                 client.close();
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -58,6 +64,7 @@ public class ClientHandler implements Runnable{
 
         Mail mail = new Mail("ciao sono una prova","matti@gmail.com","io","","tu");
         out.writeObject(mail);
+        out.flush();
 
     }
 

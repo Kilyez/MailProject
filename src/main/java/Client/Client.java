@@ -35,6 +35,7 @@ public class Client
         out = new ObjectOutputStream(client.getOutputStream());
 
         out.writeObject(mail);
+        out.flush();
 
     }
 

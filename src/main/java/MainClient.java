@@ -11,10 +11,11 @@ public class MainClient {
         Mail mailrecived = client1.receiveMessage();
         System.out.println(mailrecived.getEmail());
         Mail mail2 = new Mail("ciao sono una prova","mattiamondino@gmail.com","io","oggi","simone@gmail.com");
-        Mail mail3 = new Mail("ciao ","mattiamondino@gmail.com","io","oggi","simone@gmail.com");
+        Mail mail3 = new Mail("ciao ","luca@gmail.com","io","oggi","simone@gmail.com");
         Client client2 = new Client();
         client2.SendMessage(mail2);
-        client2.SendMessage(mail3);
+        Client client3 = new Client();
+        client3.SendMessage(mail3);
 
 
     }
