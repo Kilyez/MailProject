@@ -1,6 +1,7 @@
 package Server;
 
 import Messages.Mail;
+import Messages.UserMailManagement;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -17,6 +18,7 @@ public class Server {
     private Socket s;
     private static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
     private ExecutorService pool = Executors.newFixedThreadPool(4);
+    private UserMailManagement usermanagment = new UserMailManagement();
 
     public Server(int port){
         this.port = port;
@@ -42,10 +44,11 @@ public class Server {
         {
             try
             {
+
                 System.out.println("Server in attesa di richieste...");
                 s = server.accept();
                 System.out.println("Connected to Client");
-                ClientHandler clientThread = new ClientHandler(s);
+                ClientHandler clientThread = new ClientHandler(s,usermanagment);
                 clients.add(clientThread);
                 pool.execute(clientThread);
 
@@ -66,15 +69,6 @@ public class Server {
         }catch(IOException e){
             e.printStackTrace();
         }
-    }
-
-    public Mail receiveMessage() throws IOException, ClassNotFoundException {
-        ObjectInputStream reader = new ObjectInputStream(s.getInputStream());
-        Mail mail = (Mail) reader.readObject();
-
-        System.out.println("Got from client on port " + s.getPort() + " " );
-        return mail;
-
     }
 
 
