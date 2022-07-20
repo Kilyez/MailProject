@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="260.0" prefWidth="387.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mailproject.LoginController">
+   <children>
+      <TextField fx:id="emailTxt" layoutX="83.0" layoutY="118.0" />
+      <Label layoutX="46.0" layoutY="122.0" text="Email:" />
+      <Button fx:id="SignInBtn" layoutX="179.0" layoutY="167.0" mnemonicParsing="false" onAction="#handleButtonEvent" text="Sign in" />
+      <Label alignment="CENTER" layoutX="97.0" layoutY="63.0" prefHeight="17.0" prefWidth="121.0" text="FakeLogin">
+         <font>
+            <Font name="System Bold Italic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="errlbl" alignment="CENTER" layoutX="83.0" layoutY="143.0" prefHeight="17.0" prefWidth="149.0" textFill="RED">
+         <font>
+            <Font name="System Italic" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
