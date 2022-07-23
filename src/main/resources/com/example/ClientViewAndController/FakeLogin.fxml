@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="260.0" prefWidth="387.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mailproject.LoginController">
+<AnchorPane prefHeight="260.0" prefWidth="387.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ClientViewAndController.LoginController">
    <children>
       <TextField fx:id="emailTxt" layoutX="83.0" layoutY="118.0" />
       <Label layoutX="46.0" layoutY="122.0" text="Email:" />

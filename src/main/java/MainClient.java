@@ -1,8 +1,4 @@
-import Client.Client;
-import Messages.Mail;
-
 import java.io.IOException;
-import java.util.Timer;
 
 public class MainClient {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {

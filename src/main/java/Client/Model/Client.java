@@ -1,4 +1,4 @@
-package Client;
+package Client.Model;
 
 import Messages.Mail;
 import java.net.*;

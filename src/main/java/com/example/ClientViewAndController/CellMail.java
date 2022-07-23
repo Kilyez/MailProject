@@ -1,11 +1,7 @@
-package com.example.mailproject;
+package com.example.ClientViewAndController;
 
 import Messages.Mail;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;

@@ -1,28 +1,29 @@
-package Server;
+package Server.Model;
 
-import Messages.Mail;
 import Messages.UserMailManagement;
+import Server.Model.ClientHandler;
 import Server.Model.ServerModel;
-import org.json.JSONObject;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
-    private ServerSocket server;
+    private ServerSocket socketServer;
     private Socket s;
-    private final ServerModel model = new ServerModel();
-    private static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
-    private ExecutorService pool = Executors.newFixedThreadPool(10);
-    private UserMailManagement usermanagment = new UserMailManagement();
+    private final ServerModel model;
+    private ExecutorService pool;
+    private UserMailManagement usermanagment;
 
-    public Server(int port){
+    public Server(int port,ServerModel model)
+    {
+        this.pool = Executors.newFixedThreadPool(10);
+        this.usermanagment = new UserMailManagement();
+        this.model = model;
         this.port = port;
         if(!startServer()){
             System.out.println("Errore nella creazione del server");
@@ -31,7 +32,7 @@ public class Server {
 
     private Boolean startServer(){
         try {
-            server = new ServerSocket(port);
+            socketServer = new ServerSocket(port);
             usermanagment.getALLUsersMailsSended();
             usermanagment.getALLUsersMailsRecived();
         }catch (IOException e){
@@ -44,31 +45,32 @@ public class Server {
     }
 
     public void RunServer(){
-        while (true)
-        {
-            try
+        new Thread(() -> {
+            while (!socketServer.isClosed())
             {
+                try
+                {
 
-                System.out.println("Server in attesa di richieste...");
-                s = server.accept();
-                System.out.println("Connected to Client");
-                ClientHandler clientThread = new ClientHandler(s,usermanagment,model);
-                clients.add(clientThread);
-                pool.execute(clientThread);
+                    System.out.println("Server in attesa di richieste...");
+                    s = socketServer.accept();
+                    ClientHandler clientThread = new ClientHandler(s,usermanagment,model);
+                    pool.execute(clientThread);
 
+
+                }
+                catch (IOException ex)
+                {
+                    ex.printStackTrace();
+                }
             }
-            catch (IOException ex)
-            {
-                ex.printStackTrace();
-            }
-        }
+        }).start();
 
     }
 
     public void CloseServer() throws IOException {
         try {
             s.close();
-            server.close();
+            socketServer.close();
             System.out.println("Chiusura connessione effettuata");
         }catch(IOException e){
             e.printStackTrace();

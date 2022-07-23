@@ -1,31 +1,22 @@
-package com.example.mailproject;
+package com.example.ClientViewAndController;
 
-import Client.Client;
+import Client.Model.Client;
 import Messages.Mail;
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 public class ClientController {
