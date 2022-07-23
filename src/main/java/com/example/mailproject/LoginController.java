@@ -41,7 +41,6 @@ public class LoginController {
             Parent newRoot = loader.load();
             ClientController clientController = loader.getController();
             clientController.setEmail(emailTxt.getText());
-
             Stage primaryStage = (Stage) emailTxt.getScene().getWindow();
             Scene scene = new Scene(newRoot);
             primaryStage.setScene(scene);

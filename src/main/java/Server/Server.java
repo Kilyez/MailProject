@@ -2,6 +2,7 @@ package Server;
 
 import Messages.Mail;
 import Messages.UserMailManagement;
+import Server.Model.ServerModel;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -16,8 +17,9 @@ public class Server {
     private int port;
     private ServerSocket server;
     private Socket s;
+    private final ServerModel model = new ServerModel();
     private static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
-    private ExecutorService pool = Executors.newFixedThreadPool(4);
+    private ExecutorService pool = Executors.newFixedThreadPool(10);
     private UserMailManagement usermanagment = new UserMailManagement();
 
     public Server(int port){
@@ -30,6 +32,8 @@ public class Server {
     private Boolean startServer(){
         try {
             server = new ServerSocket(port);
+            usermanagment.getALLUsersMailsSended();
+            usermanagment.getALLUsersMailsRecived();
         }catch (IOException e){
             e.printStackTrace();
             return false;
@@ -48,7 +52,7 @@ public class Server {
                 System.out.println("Server in attesa di richieste...");
                 s = server.accept();
                 System.out.println("Connected to Client");
-                ClientHandler clientThread = new ClientHandler(s,usermanagment);
+                ClientHandler clientThread = new ClientHandler(s,usermanagment,model);
                 clients.add(clientThread);
                 pool.execute(clientThread);
 

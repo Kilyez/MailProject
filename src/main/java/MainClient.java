@@ -24,10 +24,10 @@ public class MainClient {
         client1.SendMail(mail2);
         client1.SendMail(mail3);
         client1.SendMail(mail4);*/
-        Mail mail3 = new Mail("ciao ","luca@gmail.com","simone@gmail.com","simone@gmail.com","test");
-        Mail mail2 = new Mail("ciao sono una prova","mattiamondino@gmail.com","simone@gmail.com","paolo@gmail.com","test");
-        Mail mail4 = new Mail("ciao","mattiamondino@gmail.com","simone@gmail.com","paolo@gmail.com","test");
-        Mail mail1 = new Mail("ciao sono un nuovo messagio","mattiamondino@gmail.com","simone@gmail.com","simone@gmail.com","test");
+        /*Mail mail3 = new Mail("ciao ","luca@gmail.com","simone@gmail.com","test");
+        Mail mail2 = new Mail("ciao sono una prova","luca@gmail.com","paolo@gmail.com","test");
+        Mail mail4 = new Mail("ciao","simone@gmail.com","paolo@gmail.com","test");
+        Mail mail1 = new Mail("ciao sono un nuovo messagio","simone@gmail.com","simone@gmail.com","test");
 
         Client client1 = new Client("luca@gmail.com");
         client1.SendMail(mail4);
@@ -37,13 +37,19 @@ public class MainClient {
         client1.SendMail(mail2);
 
         client1.SendMail(mail3);
+         Mail mail1 = new Mail("ciao sono un nuovo messagio ti e` arrivato il popUp?","luca@gmail.com","simone@gmail.com","test popUp");
+        Client client1 = new Client("luca@gmail.com");
+        client1.SendMail(mail1);
+         */
 
+        String[] reciver = new String[4];
+        reciver[0] = "simone";
+        reciver[1] = "mattia";
+        reciver[2] = "francesco";
+        reciver[3] = "francesco";
 
+        String reciversNotFound = new String();
 
-
-
-
-
-
+        System.out.println(reciversNotFound.isEmpty());
     }
 }

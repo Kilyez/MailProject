@@ -11,14 +11,12 @@ public class Mail implements Serializable {
     private String object;
     private String text;
     private String time;
-    private String email;
     private String sender;
     private String date;
     private String reciver;
 
-    public Mail(String text, String email, String sender, String reciver, String object) {
+    public Mail(String text, String sender, String reciver, String object) {
         this.text = text;
-        this.email = email;
         this.sender = sender;
         String actual = new Timestamp(System.currentTimeMillis()).toString();
         this.date = actual.substring(0,10);
@@ -26,9 +24,8 @@ public class Mail implements Serializable {
         this.reciver = reciver;
         this.object = object;
     }
-    public Mail(String text, String email, String sender, String reciver, String object,String date, String time) {
+    public Mail(String text, String sender, String reciver, String object,String date, String time) {
         this.text = text;
-        this.email = email;
         this.sender = sender;
         this.reciver = reciver;
         this.object = object;
@@ -45,9 +42,13 @@ public class Mail implements Serializable {
     }
 
     public String getObjectPreview() {
-        int i = 30 - object.length();
-        String filled = StringUtils.repeat(" ", i);
-        return  object.concat(filled);
+        String objectPreview;
+        if(object.length() > 30){
+             objectPreview = object.substring(0,27) + "...";
+        }else{
+            objectPreview = object;
+        }
+        return  objectPreview;
     }
     public String listFormatter(){
         String format = getMailPreview() + getObjectPreview() + getTextPreview() + getDate();
@@ -67,22 +68,14 @@ public class Mail implements Serializable {
     }
 
     public String getMailPreview(){
-        int i = email.indexOf('@');
-        String previewMail = email.substring(0,i);
+        int i = sender.indexOf('@');
+        String previewMail = sender.substring(0,i);
 
         return previewMail;
     }
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getSender() {

@@ -3,6 +3,7 @@ package Server;
 import Messages.Mail;
 import Messages.Message;
 import Messages.UserMailManagement;
+import Server.Model.ServerModel;
 import javafx.beans.property.ListProperty;
 
 import java.io.*;
@@ -14,20 +15,19 @@ public class ClientHandler implements Runnable{
     private Socket client;
     private ObjectInputStream input;
     private ObjectOutputStream out;
-    private int counter;
+    private ServerModel serverModel;
     private UserMailManagement mailmanagement;
-    ArrayList<Mail> userMails;
+    private ArrayList<Mail> userMails;
 
 
-    public ClientHandler(Socket client, UserMailManagement usermanagment) throws IOException {
+
+    public ClientHandler(Socket client, UserMailManagement usermanagment, ServerModel model) throws IOException {
         this.client = client;
-        input = new ObjectInputStream(client.getInputStream());
-        out = new ObjectOutputStream(client.getOutputStream());
-        counter ++;
-        mailmanagement = usermanagment;
-        userMails = new ArrayList<>();
-        usermanagment.getALLUsersMailsRecived();
-        usermanagment.getALLUsersMailsSended();
+        this.input = new ObjectInputStream(client.getInputStream());
+        this.out = new ObjectOutputStream(client.getOutputStream());
+        this.serverModel = model;
+        this.mailmanagement = usermanagment;
+        this.userMails = new ArrayList<>();
     }
 
     @Override
@@ -36,17 +36,9 @@ public class ClientHandler implements Runnable{
         {
             try {
 
-
                 Message message = receiveMessage();
                 filterMessage(message);
                 client.close();
-                /*ArrayList<Mail> mailList = recordMessagges.getALLUsersMails();
-                mailList.forEach( m -> System.out.println(m.getText()));*/
-               /* Message message = new Message("req", "","simone@gmail.com","","");
-                ArrayList<Mail> mailList = recordMessagges.getUserMails(message);
-                mailList.forEach( m -> System.out.println(m.getEmail()));
-                System.out.println(mail.getEmail());*/
-
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -59,8 +51,18 @@ public class ClientHandler implements Runnable{
     }
     public void filterMessage(Message message) throws IOException {
 
-        if(Objects.equals(message.getType(), "SENDMAIL")){
-            mailmanagement.saveMail(message.getMail());
+        if(Objects.equals(message.getType(), "LOGIN")){
+            mailmanagement.checkLogInfo(message.getSender());
+
+        }else if(Objects.equals(message.getType(), "SENDMAIL")){
+            Message response;
+            String reciversNotFound = mailmanagement.saveMail(message.getMail());
+            if (reciversNotFound.isEmpty()){
+                response = new Message("OK","","SERVER",null);
+            }else{
+                response = new Message("ERRNOUSER",reciversNotFound,"SERVER",null);
+            }
+            SendMessage(response);
 
 
         }else if(Objects.equals(message.getType(), "GETMAILS")){
@@ -74,8 +76,14 @@ public class ClientHandler implements Runnable{
             Message response = new Message("GETSENDEDMAIL","","SERVER",userMails);
             SendMessage(response);
 
-        }
+        }else if (Objects.equals(message.getType(), "CANCSENDEDMAIL")){
 
+            mailmanagement.cancelMail(message.getMail(),true, message.getSender());
+
+        }else if (Objects.equals(message.getType(), "CANCRECIVEDMAIL")){
+            mailmanagement.cancelMail(message.getMail(),false, message.getSender());
+
+        }
     }
 
     public Message receiveMessage() throws IOException, ClassNotFoundException {
