@@ -14,6 +14,7 @@ public class ServerController {
     private TextArea logField;
 
 
+
     @FXML
     private void initialize() {
         // Your code goes here
@@ -24,4 +25,10 @@ public class ServerController {
 
 
     }
+
+    public void handleClearButton(){
+        serverModel.clearLogText();
+    }
+
+
 }

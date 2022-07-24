@@ -3,6 +3,8 @@ package com.example.ClientViewAndController;
 import Client.Model.Client;
 import Messages.Mail;
 import javafx.animation.PauseTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -12,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -68,7 +71,10 @@ public class ClientController {
     private TextField popUp;
     @FXML
     private Label erReciversNotFound;
+    @FXML
+    private Circle onlineCircle;
 
+    private BooleanProperty isConnected;
     private String email;
     private Client clientModel;
 
@@ -80,6 +86,7 @@ public class ClientController {
         File file  = new File("C:\\Users\\matti\\MailProject\\image\\iconaTrial.png");
         Image image = new Image(file.toURI().toString());
         imageView.setImage(image);
+        isConnected = new SimpleBooleanProperty();
         ClientController c = this;
         MailListView.setCellFactory(new Callback<ListView<Mail>, ListCell<Mail>>() {
             @Override
@@ -97,6 +104,7 @@ public class ClientController {
             }
         });
 
+
     }
 
 
@@ -107,7 +115,21 @@ public class ClientController {
         writeMail.setVisible(false);
         sendedMail.setVisible(false);
         clientModel.logIn();
+        isConnected.bind(clientModel.isConnectedProperty());
+        isConnected.addListener((observable, oldValue, newValue) -> {
+            // Only if completed
+            if (newValue){
+                onlineCircle.setStyle("-fx-fill: green");
+            }else{
+                onlineCircle.setStyle("-fx-fill: red");
+            }
+        });
+        if (isConnected.get()){
+            onlineCircle.setStyle("-fx-fill: green");
+        }else{
+            onlineCircle.setStyle("-fx-fill: red");
 
+        }
 
 
     }
@@ -126,7 +148,11 @@ public class ClientController {
     public void openScriviPanel(ActionEvent actionEvent) {
         mailView.setVisible(false);
         displayMail.setVisible(false);
-        writeMail.setVisible(true);
+        if (isConnected.get()){
+            writeMail.setVisible(true);
+        }else{
+            writeMail.setVisible(false);
+        }
         sendedMail.setVisible(false);
         clearForm();
         erReciversNotFound.setText("");

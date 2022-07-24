@@ -50,12 +50,10 @@ public class Server {
             {
                 try
                 {
-
                     System.out.println("Server in attesa di richieste...");
                     s = socketServer.accept();
                     ClientHandler clientThread = new ClientHandler(s,usermanagment,model);
                     pool.execute(clientThread);
-
 
                 }
                 catch (IOException ex)

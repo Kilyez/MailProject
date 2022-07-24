@@ -142,7 +142,7 @@ public class UserMailManagement {
 
     }
 
-    public ArrayList<Mail> getUserMailsSended(Message message) throws FileNotFoundException {
+    public synchronized ArrayList<Mail> getUserMailsSended(Message message) throws FileNotFoundException {
 
         ArrayList<Mail> userEmails = new ArrayList<>();
         if (allUsersMailsSended.containsKey(message.getSender())) {

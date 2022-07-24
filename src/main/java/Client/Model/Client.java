@@ -6,12 +6,15 @@ import java.io.*;
 
 import Messages.Message;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class Client
@@ -25,8 +28,10 @@ public class Client
     private ArrayList<Mail> sendedMailList;
     private ArrayList<Mail> newMails;
     private String mail;
+    private BooleanProperty isConnected;
     private StringProperty erReciversNotFounded;
     private TimerTask refreshTimer = null;
+    private TimerTask reconnectTimer = null;
 
 
 
@@ -35,16 +40,22 @@ public class Client
         this.mail= email;
         receivedMailList = new ArrayList<>();
         sendedMailList = new ArrayList<>();
+        isConnected = new SimpleBooleanProperty();
         erReciversNotFounded = new SimpleStringProperty();
         obsRecivedMailList = FXCollections.observableArrayList(receivedMailList);
         obsSendedMailList = FXCollections.observableArrayList(sendedMailList);
         try{
             StartClient();
             reciveMessage("GETSENDEDMAIL");
+            isConnected.set(true);
 
         }catch(IOException ex){
 
             System.err.println("Errore nella connessione ");
+            if (isConnected.get()){
+                isConnected.set(false);
+            }
+            attemptingReconnect();
 
         }
 
@@ -54,11 +65,17 @@ public class Client
     public void StartClient() throws IOException{
 
         System.out.println("Apertura connessione...");
-        this.client = new Socket("localhost", 7777);
+        if(client == null || client.isClosed()){
+            this.client = new Socket("localhost", 7777);
+        }
         out = new ObjectOutputStream(client.getOutputStream());
         input = new ObjectInputStream(client.getInputStream());
 
 
+    }
+
+    public BooleanProperty isConnectedProperty() {
+        return isConnected;
     }
 
     public ObservableList<Mail> getObsRecivedMailList() {
@@ -69,6 +86,39 @@ public class Client
     public ObservableList<Mail> getObsSendedMailList() {
 
         return obsSendedMailList;
+    }
+
+    public void attemptingReconnect(){
+        if (reconnectTimer == null){
+            Timer periodicalRefresh = new Timer();
+            reconnectTimer = new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("mi sto riconnettendo");
+                        client = new Socket("localhost", 7777);
+                        isConnected.set(true);
+                        StartClient();
+                        Message message = new Message("LOGIN", "", null, mail);
+                        out.writeObject(message);
+                        out.flush();
+                        client.close();
+                        if (obsSendedMailList.isEmpty()){
+                            reciveMessage("GETSENDEDMAIL");
+                        }
+                        reconnectTimer.cancel();
+                        reconnectTimer = null;
+                    } catch(IOException e) {
+                        // Reconnect failed, wait.
+
+                    }
+
+                }
+            };
+            periodicalRefresh.scheduleAtFixedRate(reconnectTimer,0,3000);
+
+        }
+
     }
 
     public StringProperty getErReciversNotFounded() {
@@ -146,7 +196,9 @@ public class Client
                     SendMessage(message);
                     client.close();
                 }catch (IOException e) {
-                    e.printStackTrace();
+
+                    isConnected.set(false);
+                    attemptingReconnect();
                 }
             }
         }).start();
@@ -197,7 +249,9 @@ public class Client
                     filterMessage(response);
                     client.close();
                 }catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+
+                    isConnected.set(false);
+                    attemptingReconnect();
                 }
             }
         }).start();
@@ -224,10 +278,6 @@ public class Client
                     reciveMessage("GETMAILS");
                     System.out.println(receivedMailList.size());
 
-                  /*  System.out.println(obsRecivedMailList.size());
-                    receivedMailList.forEach(mail1 -> {
-                        System.out.println(mail1);
-                    });*/
                 }
             };
             periodicalRefresh.scheduleAtFixedRate(refreshTimer,0,20000);
@@ -247,7 +297,7 @@ public class Client
 
 
 
-    public void reciveMessage(String type){
+    public synchronized void reciveMessage(String type){
 
         try {
             if(client == null || client.isClosed()){
@@ -273,7 +323,8 @@ public class Client
             client.close();
 
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            isConnected.set(false);
+            attemptingReconnect();
         }
 
     }
@@ -292,7 +343,8 @@ public class Client
                 client.close();
 
             }catch (IOException e) {
-                e.printStackTrace();
+                isConnected.set(false);
+                attemptingReconnect();
             }
 
         }).start();
