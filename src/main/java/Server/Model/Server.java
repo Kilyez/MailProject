@@ -58,7 +58,7 @@ public class Server {
                 }
                 catch (IOException ex)
                 {
-                    ex.printStackTrace();
+                    System.out.println("Il socketServer e` stato chiuso");
                 }
             }
         }).start();
@@ -67,7 +67,9 @@ public class Server {
 
     public void CloseServer() throws IOException {
         try {
-            s.close();
+            if (s != null && s.isConnected()){
+                s.close();
+            }
             socketServer.close();
             System.out.println("Chiusura connessione effettuata");
         }catch(IOException e){

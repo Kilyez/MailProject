@@ -280,7 +280,7 @@ public class Client
 
                 }
             };
-            periodicalRefresh.scheduleAtFixedRate(refreshTimer,0,20000);
+            periodicalRefresh.scheduleAtFixedRate(refreshTimer,0,5000);
 
         }
 
@@ -356,8 +356,11 @@ public class Client
         if (refreshTimer != null){
             refreshTimer.cancel();
         }
-        if(client.isConnected()){
+        if(client != null && client.isConnected()){
             client.close();
+        }
+        if(reconnectTimer != null){
+            reconnectTimer.cancel();
         }
 
     }

@@ -1,6 +1,7 @@
 package com.example.ClientViewAndController;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 import java.io.IOException;
@@ -40,6 +42,18 @@ public class LoginController {
             Stage primaryStage = (Stage) emailTxt.getScene().getWindow();
             Scene scene = new Scene(newRoot);
             primaryStage.setScene(scene);
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent windowEvent) {
+                    try {
+                        clientController.closeWindow();
+                        System.exit(1);
+                    } catch (IOException e) {
+                        System.err.println("Impossibile chiudere il client");
+                    }
+
+                }
+            });
 
 
         }

@@ -9,12 +9,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -108,7 +111,7 @@ public class ClientController {
     }
 
 
-    private void startCLient() throws InterruptedException, IOException {
+    private void startCLient() throws InterruptedException {
         clientModel = new Client(email);
         mailView.setVisible(false);
         displayMail.setVisible(false);
@@ -116,6 +119,12 @@ public class ClientController {
         sendedMail.setVisible(false);
         clientModel.logIn();
         isConnected.bind(clientModel.isConnectedProperty());
+        if (isConnected.get()){
+            onlineCircle.setStyle("-fx-fill: green");
+        }else{
+            onlineCircle.setStyle("-fx-fill: red");
+
+        }
         isConnected.addListener((observable, oldValue, newValue) -> {
             // Only if completed
             if (newValue){
@@ -124,12 +133,6 @@ public class ClientController {
                 onlineCircle.setStyle("-fx-fill: red");
             }
         });
-        if (isConnected.get()){
-            onlineCircle.setStyle("-fx-fill: green");
-        }else{
-            onlineCircle.setStyle("-fx-fill: red");
-
-        }
 
 
     }
@@ -137,6 +140,10 @@ public class ClientController {
     public void handleButtonCancel(Mail mailSelected, Boolean sended){
         clientModel.cancelMail(mailSelected,sended);
 
+    }
+
+    public void closeWindow() throws IOException {
+        clientModel.closeClient();
     }
 
     public void setEmail(String mail) throws InterruptedException, IOException {
@@ -155,7 +162,7 @@ public class ClientController {
         }
         sendedMail.setVisible(false);
         clearForm();
-        erReciversNotFound.setText("");
+        clearErrorLable();
         if(!mailView.isVisible()){
             clientModel.stopRefresh();
         }
@@ -169,6 +176,13 @@ public class ClientController {
         mailObjectTxt.clear();
         mailReciverTxt.clear();
 
+    }
+
+    public void clearErrorLable(){
+        erReciversNotFound.setText("");
+        senderFieldErr.setText("");
+        objectFieldErr.setText("");
+        textFieldErr.setText("");
     }
 
     public void openRicevutiPanel(ActionEvent actionEvent) throws InterruptedException {
@@ -275,6 +289,7 @@ public class ClientController {
             clientModel.SendMail(mail);
             clientModel.getObsSendedMailList().add(mail);
             clearForm();
+            clearErrorLable();
         }
 
     }
