@@ -5,6 +5,7 @@ import Messages.Mail;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -76,6 +77,10 @@ public class ClientController {
     private Label erReciversNotFound;
     @FXML
     private Circle onlineCircle;
+    @FXML
+    private Label mailNotSended;
+    @FXML
+    private Label serverOnLable;
 
     private BooleanProperty isConnected;
     private String email;
@@ -108,6 +113,7 @@ public class ClientController {
         });
 
 
+
     }
 
 
@@ -126,11 +132,50 @@ public class ClientController {
 
         }
         isConnected.addListener((observable, oldValue, newValue) -> {
-            // Only if completed
             if (newValue){
                 onlineCircle.setStyle("-fx-fill: green");
+                if(writeMail.isVisible()){
+                    serverOnLable.setVisible(true);
+                    PauseTransition visiblePause = new PauseTransition(
+                            Duration.seconds(8)
+                    );
+                    visiblePause.setOnFinished(
+                            event -> serverOnLable.setVisible(false)
+                    );
+                    visiblePause.play();
+                }
             }else{
                 onlineCircle.setStyle("-fx-fill: red");
+            }
+        });
+        mailNotSended.textProperty().bindBidirectional(clientModel.getErMessageNotSend());
+        mailNotSended.textProperty().addListener((ov, t, t1) -> {
+            if (!t1.isEmpty()){
+                mailNotSended.setVisible(true);
+                PauseTransition visiblePause = new PauseTransition(
+                        Duration.seconds(8)
+                );
+                visiblePause.setOnFinished(
+                        event -> {
+                            mailNotSended.setVisible(false);
+                            mailNotSended.setText("");
+                        }
+
+                );
+                visiblePause.play();
+            }
+        });
+        erReciversNotFound.textProperty().bindBidirectional(clientModel.getErReciversNotFounded());
+        erReciversNotFound.textProperty().addListener((ov, old, val) -> {
+            if (!val.isEmpty()) {
+
+                PauseTransition visiblePause = new PauseTransition(
+                        Duration.seconds(8)
+                );
+                visiblePause.setOnFinished(
+                        event -> erReciversNotFound.setText("")
+                );
+                visiblePause.play();
             }
         });
 
@@ -166,7 +211,7 @@ public class ClientController {
         if(!mailView.isVisible()){
             clientModel.stopRefresh();
         }
-        erReciversNotFound.textProperty().bindBidirectional(clientModel.getErReciversNotFounded());
+
 
     }
 
@@ -179,7 +224,7 @@ public class ClientController {
     }
 
     public void clearErrorLable(){
-        erReciversNotFound.setText("");
+
         senderFieldErr.setText("");
         objectFieldErr.setText("");
         textFieldErr.setText("");
@@ -206,7 +251,7 @@ public class ClientController {
                     if (!writeMail.isVisible()) {
                         clearForm();
                     }
-
+                    clientModel.stopRefresh();
                     senderMail.setText(mailSelected.getSender());
                     objectMail.setText(mailSelected.getObject());
                     mailText.setText(mailSelected.getText());
@@ -273,6 +318,9 @@ public class ClientController {
 
     }
 
+    public void handleReload(){
+        clientModel.getRecivedMail();
+    }
 
     public void handleInviaBtn() throws IOException {
         String[] recivers;
@@ -285,11 +333,14 @@ public class ClientController {
             recivers[0] = mailReciverTxt.getText();
         }
         if(CheckValidField(recivers,mailObjectTxt.getText(),mailTextTxt.getText())){
+
             Mail mail = new Mail(mailTextTxt.getText(), email, mailReciverTxt.getText(), mailObjectTxt.getText());
             clientModel.SendMail(mail);
-            clientModel.getObsSendedMailList().add(mail);
-            clearForm();
-            clearErrorLable();
+
+            if (isConnected.get()){
+                clearForm();
+                clearErrorLable();
+            }
         }
 
     }
@@ -358,8 +409,11 @@ public class ClientController {
         if(!mailView.isVisible()){
             clientModel.stopRefresh();
         }
+        mailObjectTxt.appendText("re:");
         mailReciverTxt.appendText(senderMail.getText() + ";");
-        mailTextTxt.appendText("Oggetto:" + "\n" + objectMail.getText() + "\n \n" + "Testo:" + "\n" + mailText.getText() + "\n\n\n" + "RISPOSTA:" + "\n\n");
+        mailTextTxt.appendText("--------------------------------------------------------------"+
+                "\n"+"DA:" + "\n" + senderMail.getText() + "\n" + "Testo:" + "\n" + mailText.getText() + "\n"
+                + "--------------------------------------------------------------" + "\n\n" + "RISPOSTA:" + "\n");
 
     }
 
@@ -373,7 +427,8 @@ public class ClientController {
         }
         mailReciverTxt.appendText(forwardField.getText());
         mailObjectTxt.appendText(objectMail.getText());
-        mailTextTxt.appendText("FORWARDED" + "\n\n" + mailText.getText());
+        mailTextTxt.appendText("FORWARDED\n" + "----------------------------------------------------------------\n" + mailText.getText()
+                                + "\n----------------------------------------------------------------");
         forwardField.clear();
 
     }
@@ -383,7 +438,7 @@ public class ClientController {
             popUp.setText("è arrivata una nuova mail!");
 
         }else {
-            popUp.setText("sono arrivate" + i + "nuove mail!");
+            popUp.setText("sono arrivate " + i + " nuove mail!");
         }
         popUp.setVisible(true);
         PauseTransition visiblePause = new PauseTransition(

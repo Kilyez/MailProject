@@ -2,7 +2,7 @@ package Messages;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 
 import java.io.*;
@@ -38,7 +38,7 @@ public class UserMailManagement {
                 reciversNotFound = reciversNotFound.concat(r+";");
 
             } else {
-                reciversFounded = reciversFounded.concat(r+"");
+                reciversFounded = reciversFounded.concat(r+";");
                 if (allUsersMailsReceived.containsKey(userMail)){
                     allUsersMailsReceived.get(userMail).add(mail);
                 }else{

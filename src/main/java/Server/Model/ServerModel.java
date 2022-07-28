@@ -1,5 +1,6 @@
 package Server.Model;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -16,12 +17,10 @@ public class ServerModel {
         return logProperty;
     }
 
-    public void setLogText(String log) {
-        logProperty.set(log);
-    }
-
     synchronized public void appendLogText(String log) {
-        logProperty.set(logProperty.get() + log + "\n");
+        Platform.runLater(() -> {
+            logProperty.set(logProperty.get() + log + "\n");
+        });
     }
 
     public void clearLogText() {

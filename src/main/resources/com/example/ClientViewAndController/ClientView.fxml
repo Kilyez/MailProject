@@ -12,22 +12,22 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.2842809364548495" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ClientViewAndController.ClientController">
+<SplitPane dividerPositions="0.2842809364548495" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ClientViewAndController.ClientController">
   <items>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #faebd7;" SplitPane.resizableWithParent="false">
          <children>
             <Label fx:id="maillbl" alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="133.0" prefHeight="17.0" prefWidth="156.0" text="Mail User" />
-            <Button fx:id="ScriviBtn" layoutX="28.0" layoutY="187.0" mnemonicParsing="false" onAction="#openScriviPanel" prefHeight="25.0" prefWidth="111.0" text="Scrivi">
+            <Button fx:id="ScriviBtn" layoutX="28.0" layoutY="187.0" mnemonicParsing="false" onAction="#openScriviPanel" prefHeight="25.0" prefWidth="111.0" style="-fx-background-color: #cdb891;" text="Scrivi">
                <font>
                   <Font name="System Italic" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="InviatiBtn" layoutX="28.0" layoutY="237.0" mnemonicParsing="false" onAction="#openInviatiPanel" prefHeight="25.0" prefWidth="111.0" text="Inviati">
+            <Button fx:id="InviatiBtn" layoutX="28.0" layoutY="237.0" mnemonicParsing="false" onAction="#openInviatiPanel" prefHeight="25.0" prefWidth="111.0" style="-fx-background-color: #cdb891;" text="Inviati">
                <font>
                   <Font name="System Italic" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="RIcevutiBtn" layoutX="28.0" layoutY="286.0" mnemonicParsing="false" onAction="#openRicevutiPanel" prefHeight="25.0" prefWidth="111.0" text="Ricevuti">
+            <Button fx:id="RIcevutiBtn" layoutX="28.0" layoutY="286.0" mnemonicParsing="false" onAction="#openRicevutiPanel" prefHeight="25.0" prefWidth="111.0" style="-fx-background-color: #cdb891;" text="Ricevuti">
                <font>
                   <Font name="System Italic" size="12.0" />
                </font>
@@ -35,9 +35,9 @@
             <ImageView fx:id="imageView" fitHeight="84.0" fitWidth="103.0" layoutX="44.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" />
             <Circle fx:id="onlineCircle" fill="#2bff1f" layoutX="14.0" layoutY="14.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" />
          </children></AnchorPane>
-    <AnchorPane fx:id="switchPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+    <AnchorPane fx:id="switchPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #faebd7;" SplitPane.resizableWithParent="false">
          <children>
-            <Pane fx:id="mailView" prefHeight="398.0" prefWidth="425.0" visible="false">
+            <Pane fx:id="mailView" prefHeight="398.0" prefWidth="425.0">
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="425.0" text="MyMail">
                      <font>
@@ -49,6 +49,7 @@
                         <Font name="System Italic" size="12.0" />
                      </font>
                   </TextField>
+                  <Button fx:id="reloadBtn" layoutX="7.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleReload" prefHeight="25.0" prefWidth="59.0" style="-fx-background-color: #cdb891;" text="Reload" />
                </children>
             </Pane>
             <Pane fx:id="displayMail" layoutY="-1.0" prefHeight="400.0" prefWidth="425.0" style="-fx-text-box-border: white; -fx-focus-color: white;" visible="false">
@@ -63,15 +64,15 @@
                   <Label layoutX="22.0" layoutY="192.0" text="Testo : " />
                   <Label layoutX="24.0" layoutY="124.0" prefHeight="17.0" prefWidth="59.0" text="Oggetto :" />
                   <TextArea fx:id="mailText" editable="false" layoutX="71.0" layoutY="192.0" prefHeight="152.0" prefWidth="317.0" />
-                  <Button fx:id="forwardBtn" layoutX="8.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleForwardButton" text="Forward To :" />
-                  <Button fx:id="replyAllBtn" layoutX="230.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleReplyAllButton" text="Reply All" />
-                  <Button fx:id="replyBtn" layoutX="153.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleReplyButton" text="Reply" />
+                  <Button fx:id="forwardBtn" layoutX="8.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleForwardButton" style="-fx-background-color: #cdb891;" text="Forward To :" />
+                  <Button fx:id="replyAllBtn" layoutX="230.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleReplyAllButton" style="-fx-background-color: #cdb891;" text="Reply All" />
+                  <Button fx:id="replyBtn" layoutX="153.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleReplyButton" style="-fx-background-color: #cdb891;" text="Reply" />
                   <TextField fx:id="senderMail" editable="false" layoutX="114.0" layoutY="48.0" prefHeight="25.0" prefWidth="226.0" />
                   <TextField fx:id="toMails" editable="false" layoutX="115.0" layoutY="85.0" prefHeight="25.0" prefWidth="226.0" />
                   <TextField fx:id="objectMail" editable="false" layoutX="114.0" layoutY="120.0" prefHeight="25.0" prefWidth="226.0" />
                   <TextField fx:id="forwardField" layoutX="114.0" layoutY="155.0" prefHeight="25.0" prefWidth="226.0" />
                </children></Pane>
-            <Pane fx:id="writeMail" prefHeight="398.0" prefWidth="425.0">
+            <Pane fx:id="writeMail" prefHeight="398.0" prefWidth="425.0" visible="false">
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="425.0" text="MyMail">
                      <font>
@@ -82,7 +83,7 @@
                   <TextField fx:id="mailObjectTxt" layoutX="118.0" layoutY="92.0" prefHeight="25.0" prefWidth="191.0" />
                   <TextArea fx:id="mailTextTxt" layoutX="50.0" layoutY="141.0" prefHeight="200.0" prefWidth="325.0" />
                   <Label layoutX="99.0" layoutY="53.0" text="A :" />
-                  <Button fx:id="InviaBtn" layoutX="182.0" layoutY="358.0" mnemonicParsing="false" onAction="#handleInviaBtn" prefHeight="25.0" prefWidth="64.0" text="Invia" />
+                  <Button fx:id="InviaBtn" layoutX="182.0" layoutY="358.0" mnemonicParsing="false" onAction="#handleInviaBtn" prefHeight="25.0" prefWidth="64.0" style="-fx-background-color: #cdb891;" text="Invia" />
                   <Label layoutX="62.0" layoutY="96.0" text="Oggetto :" />
                   <Label fx:id="senderFieldErr" alignment="CENTER" layoutX="119.0" layoutY="74.0" prefHeight="17.0" prefWidth="191.0" textFill="RED" />
                   <Label fx:id="objectFieldErr" alignment="CENTER" layoutX="117.0" layoutY="117.0" prefHeight="17.0" prefWidth="191.0" textFill="RED">
@@ -92,6 +93,16 @@
                   </Label>
                   <Label fx:id="textFieldErr" alignment="CENTER" layoutX="119.0" layoutY="341.0" prefHeight="17.0" prefWidth="191.0" textFill="RED" />
                   <Label fx:id="erReciversNotFound" alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="26.0" prefHeight="17.0" prefWidth="425.0" textFill="RED">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="mailNotSended" alignment="CENTER" layoutX="9.0" layoutY="7.0" prefHeight="17.0" prefWidth="402.0" style="-fx-background-color: #cc0000;" textFill="WHITE" visible="false">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="serverOnLable" alignment="CENTER" layoutX="9.0" layoutY="9.0" prefHeight="17.0" prefWidth="402.0" style="-fx-background-color: green;" text="Il Server e` nuovamente ON!" textFill="WHITE" visible="false">
                      <font>
                         <Font name="System Italic" size="12.0" />
                      </font>

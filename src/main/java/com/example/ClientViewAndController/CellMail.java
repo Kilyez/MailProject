@@ -24,6 +24,7 @@ public class CellMail extends ListCell<Mail> {
 
         if (item != null) {
             Label mail;
+            setStyle("-fx-control-inner-background: #faf0e6");
             if (mailsended){
                 String reciver;
                 int i = item.getReciver().indexOf(";");
@@ -62,6 +63,7 @@ public class CellMail extends ListCell<Mail> {
             setGraphic(gridPane);
 
         } else {
+            setStyle("-fx-control-inner-background: #faf0e6");
             setGraphic(null);
         }
     }

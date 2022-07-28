@@ -6,10 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="311.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ServerViewAndController.ServerController">
    <children>
-      <TextArea fx:id="logField" layoutX="15.0" layoutY="48.0" prefHeight="220.0" prefWidth="355.0" />
+      <TextArea fx:id="logField" editable="false" layoutX="15.0" layoutY="48.0" prefHeight="220.0" prefWidth="355.0" />
       <Button fx:id="clearLog" layoutX="171.0" layoutY="272.0" mnemonicParsing="false" onAction="#handleClearButton" text="Clear" />
       <Label alignment="CENTER" layoutX="84.0" layoutY="14.0" prefHeight="17.0" prefWidth="217.0" text="SERVER">
          <font>

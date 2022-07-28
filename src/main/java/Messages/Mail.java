@@ -1,6 +1,6 @@
 package Messages;
 
-import org.apache.commons.lang.StringUtils;
+
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -33,14 +33,6 @@ public class Mail implements Serializable {
         this.time = time;
     }
 
-    public String getObject() { return object; }
-
-    public String getTime() { return time; }
-
-    public String getText() {
-        return text;
-    }
-
     public String getObjectPreview() {
         String objectPreview;
         if(object.length() > 30){
@@ -50,6 +42,7 @@ public class Mail implements Serializable {
         }
         return  objectPreview;
     }
+
     public String listFormatter(){
         String format = getMailPreview() + getObjectPreview() + getTextPreview() + getDate();
         return format;
@@ -73,6 +66,32 @@ public class Mail implements Serializable {
 
         return previewMail;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mail mail = (Mail) o;
+        return Objects.equals(time, mail.time) && Objects.equals(date, mail.date);
+    }
+
+
+    public int compareTo(Mail mail){
+        if (this.getDate() == mail.getDate()) {
+            if (this.getTime() == mail.getTime()) {
+                return 0;
+            } else if (this.getTime().compareTo(mail.getTime()) > 0) {
+                return -1;
+            } else{
+                return 1;
+            }
+        }else if(this.getDate().compareTo(mail.getDate()) > 0){
+            return -1;
+        }else{
+            return 1;
+        }
+    }
+
 
     public void setText(String text) {
         this.text = text;
@@ -102,12 +121,13 @@ public class Mail implements Serializable {
         this.reciver = reciver;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Mail mail = (Mail) o;
-        return Objects.equals(time, mail.time) && Objects.equals(date, mail.date);
+    public String getObject() { return object; }
+
+    public String getTime() { return time; }
+
+    public String getText() {
+        return text;
     }
+
 
 }

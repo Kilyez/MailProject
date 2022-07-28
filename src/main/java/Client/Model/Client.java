@@ -22,14 +22,15 @@ public class Client
     private Socket client;
     private ObjectInputStream input;
     private ObjectOutputStream out;
-    private ObservableList<Mail> obsRecivedMailList;
-    private ArrayList<Mail> receivedMailList;
-    private ObservableList<Mail> obsSendedMailList;
-    private ArrayList<Mail> sendedMailList;
+    private final ObservableList<Mail> obsRecivedMailList;
+    private final ArrayList<Mail> receivedMailList;
+    private final ObservableList<Mail> obsSendedMailList;
+    private final ArrayList<Mail> sendedMailList;
     private ArrayList<Mail> newMails;
-    private String mail;
-    private BooleanProperty isConnected;
-    private StringProperty erReciversNotFounded;
+    private final String mail;
+    private final BooleanProperty isConnected;
+    private final StringProperty erReciversNotFounded;
+    private final StringProperty erMessageNotSend;
     private TimerTask refreshTimer = null;
     private TimerTask reconnectTimer = null;
 
@@ -41,6 +42,7 @@ public class Client
         receivedMailList = new ArrayList<>();
         sendedMailList = new ArrayList<>();
         isConnected = new SimpleBooleanProperty();
+        erMessageNotSend = new SimpleStringProperty();
         erReciversNotFounded = new SimpleStringProperty();
         obsRecivedMailList = FXCollections.observableArrayList(receivedMailList);
         obsSendedMailList = FXCollections.observableArrayList(sendedMailList);
@@ -50,13 +52,11 @@ public class Client
             isConnected.set(true);
 
         }catch(IOException ex){
-
             System.err.println("Errore nella connessione ");
             if (isConnected.get()){
                 isConnected.set(false);
             }
             attemptingReconnect();
-
         }
 
 
@@ -125,6 +125,10 @@ public class Client
 
         return erReciversNotFounded;
     }
+    public StringProperty getErMessageNotSend(){
+
+        return erMessageNotSend;
+    }
 
     public void filterMessage(Message message){
         if(Objects.equals(message.getType(), "GETMAILS")){
@@ -163,11 +167,10 @@ public class Client
    }
 
     public void addToReceivedMailList(ArrayList<Mail> newMails){
-        for(Mail mail : newMails){
-            receivedMailList.add(mail);
 
-        }
+        receivedMailList.addAll(newMails);
         obsRecivedMailList.addAll(newMails);
+        sortObsList(obsRecivedMailList);
 
     }
 
@@ -182,7 +185,6 @@ public class Client
                     if(sended){
                         sendedMailList.remove(toSend);
                         Platform.runLater(() -> obsSendedMailList.remove(toSend));
-
                     }else{
                         receivedMailList.remove(toSend);
                         Platform.runLater(() -> obsRecivedMailList.remove(toSend));
@@ -196,25 +198,31 @@ public class Client
                     SendMessage(message);
                     client.close();
                 }catch (IOException e) {
-
                     isConnected.set(false);
                     attemptingReconnect();
                 }
             }
         }).start();
 
-
-
     }
 
     public void addToSendedMailList(ArrayList<Mail> newMails){
-        for(Mail mail : newMails){
-            sendedMailList.add(mail);
-            obsSendedMailList.add(mail);
-        }
 
-
+            sendedMailList.addAll(newMails);
+            obsSendedMailList.addAll(newMails);
+            sortObsList(obsSendedMailList);
     }
+
+    public void sortObsList(ObservableList<Mail> obsList){
+
+        Collections.sort(obsList, new Comparator<Mail>() {
+            @Override
+            public int compare(Mail m1, Mail m2) {
+                return m1.compareTo(m2);
+            }
+        });
+    }
+
 
     public void SendMessage(Message message) throws IOException {
 
@@ -225,11 +233,9 @@ public class Client
     public void getRecivedMail(){
 
        new Thread(()-> {
-
            reciveMessage("GETMAILS");
            System.out.println(receivedMailList.size());
-
-        });
+        }).start();
     }
 
 
@@ -240,16 +246,18 @@ public class Client
                     if(client.isClosed()){
                         StartClient();
                     }
-
                     Message message = new Message("SENDMAIL", "", smail ,mail);
-
                     SendMessage(message);
                     Message response = (Message) input.readObject();
                     System.out.println("Got from Server on port " + client.getPort() + " " );
                     filterMessage(response);
+                    Platform.runLater(() -> {erMessageNotSend.set("");});
+                    if (!response.getType().equals("ERRNOUSER")){
+                        Platform.runLater(()-> {obsSendedMailList.add(smail);});
+                    }
                     client.close();
                 }catch (IOException | ClassNotFoundException e) {
-
+                    Platform.runLater(() -> {erMessageNotSend.set("ERRORE:la mail non e`stata inviata perche` il server e` OFF!");});
                     isConnected.set(false);
                     attemptingReconnect();
                 }
@@ -257,17 +265,6 @@ public class Client
         }).start();
 
     }
-
-    public Mail reciveMail() throws ClassNotFoundException, IOException {
-
-        Mail mail = (Mail) input.readObject();
-
-        System.out.println("Got from Server on port " + client.getPort() + " " );
-        return mail;
-
-    }
-
-
 
     public void recivedMailRefresh() throws InterruptedException {
         if (refreshTimer == null){
@@ -277,13 +274,10 @@ public class Client
                 public void run() {
                     reciveMessage("GETMAILS");
                     System.out.println(receivedMailList.size());
-
                 }
             };
-            periodicalRefresh.scheduleAtFixedRate(refreshTimer,0,5000);
-
+            periodicalRefresh.scheduleAtFixedRate(refreshTimer,0,10000);
         }
-
     }
 
 
@@ -292,7 +286,6 @@ public class Client
             refreshTimer.cancel();
             refreshTimer = null;
         }
-
     }
 
 
@@ -307,12 +300,9 @@ public class Client
             if(type.equals("GETMAILS")){
                 if(receivedMailList.isEmpty()){
                     message = new Message("GETMAILS","",null, mail );
-
                 }else{
                     message = new Message("GETMAILS", "",  receivedMailList.get(receivedMailList.size()-1), mail);
-
                 }
-
             }else{
                 message = new Message("GETSENDEDMAIL","",null, mail );
             }
@@ -337,11 +327,9 @@ public class Client
                     StartClient();
                 }
                 Message message = new Message("LOGIN", "", null, mail);
-
                 out.writeObject(message);
                 out.flush();
                 client.close();
-
             }catch (IOException e) {
                 isConnected.set(false);
                 attemptingReconnect();
